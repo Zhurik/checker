@@ -1,0 +1,14 @@
+[package]
+name = "checker"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1.17", features = ["rt-multi-thread", "macros"] }
+teloxide = { version = "0.13", features = ["macros"] }
+shiplift = "0.7"
+futures = "0.3.30"
+clap = { version = "4.5.16", features = ["derive"] }
+serde = "1.0.210"
+toml = "0.8.19"
+chrono = "0.4.38"
