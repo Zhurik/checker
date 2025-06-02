@@ -3,12 +3,19 @@ name = "checker"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+# If compiling on a system without OpenSSL installed, or cross-compiling for a different
+# architecture, enable this feature to compile OpenSSL as part of the build.
+# See https://docs.rs/openssl/#vendored for more.
+static_ssl = ['openssl/vendored']
+
 [dependencies]
 tokio = { version = "1.17", features = ["rt-multi-thread", "macros"] }
-teloxide = { version = "0.13", default-features = false, features = ["macros", "rustls"] }
+teloxide = { version = "0.13", features = ["macros"] }
 shiplift = "0.7"
 futures = "0.3.30"
 clap = { version = "4.5.16", features = ["derive"] }
 serde = "1.0.210"
 toml = "0.8.19"
 chrono = "0.4.38"
+openssl = { version = "0.10.66", optional = true }

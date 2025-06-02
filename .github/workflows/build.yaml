@@ -1,0 +1,92 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  pre-commit:
+    name: Run all linters
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v3
+    - uses: pre-commit/action@v3.0.1
+
+  build:
+    needs: pre-commit
+    name: Build for ${{ matrix.build }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+        - build: linux
+          os: ubuntu-latest
+          rust: stable
+          target: x86_64-unknown-linux-musl
+          cross: false
+
+        - build: arm-v7
+          os: ubuntu-latest
+          rust: stable
+          target: armv7-unknown-linux-gnueabihf
+          linker: gcc-arm-linux-gnueabihf
+          cross: true
+
+        - build: aarch64
+          os: ubuntu-latest
+          rust: stable
+          target: aarch64-unknown-linux-gnu
+          linker: gcc-aarch64-linux-gnu
+          cross: true
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          ~/.rustup
+          target
+        key: ${{ runner.os }}-${{ matrix.rust }}
+
+    - name: Install musl
+      if: ${{ !matrix.cross }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install musl-tools
+
+    - name: Install Linker
+      if: matrix.cross
+      run: |
+        sudo apt-get update
+        sudo apt-get install ${{ matrix.linker }}
+        cat .cargo/config.toml >> .cargo/config
+
+    - name: Install Rust
+      run: |
+        rustup install ${{ matrix.rust }}
+        rustup target add ${{ matrix.target }}
+        rustup show
+
+    - name: Build
+      run: cargo build --release --target ${{ matrix.target }} --features=static_ssl
+      with:
+        name: checker
+        path: target/${{ matrix.target }}
+        retention-days: 5
