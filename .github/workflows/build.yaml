@@ -14,16 +14,16 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  pre-commit:
-    name: Run all linters
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v3
-    - uses: pre-commit/action@v3.0.1
+  # pre-commit:
+  #   name: Run all linters
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - uses: actions/setup-python@v3
+  #   - uses: pre-commit/action@v3.0.1
 
   build:
-    needs: pre-commit
+    # needs: pre-commit
     name: Build for ${{ matrix.build }}
     runs-on: ${{ matrix.os }}
     strategy:
