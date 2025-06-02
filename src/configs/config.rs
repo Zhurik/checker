@@ -7,6 +7,7 @@ pub struct Config {
     pub token: String,
     pub chat_id: i64,
     pub image: String,
+    pub people: Vec<String>,
 }
 
 pub fn from_file(path: String) -> Result<Config, Box<dyn std::error::Error>> {

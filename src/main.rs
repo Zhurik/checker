@@ -29,7 +29,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 eprintln!("Error: {}", e);
 
                 let current_time = chrono::Local::now();
-                let msg = format!("Произошла ошибка при скачивании: {e}\n\n{current_time}");
+                let people_string = config.people.join(" ");
+                let msg = format!("Произошла ошибка при скачивании: {e}\n\n{current_time}\n\n{people_string}");
                 bot.send_message(chat_id, msg).await?;
                 return Ok(())
             },
@@ -49,7 +50,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         current_time.to_rfc2822(),
     );
 
-    bot.send_message(chat_id, msg).await?;
+    println!("{}", msg);
+
+    // bot.send_message(chat_id, msg).await?;
 
     match docker.images().get(&config.image).delete().await {
         Ok(statuses) => {
