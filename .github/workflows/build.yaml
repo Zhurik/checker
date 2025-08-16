@@ -17,7 +17,45 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          ~/.rustup
+          target
+        key: ${{ runner.os }}-coverage-stable
+
+    - name: Install Rust
+      run: |
+        rustup install stable
+        rustup default stable
+        rustup show
+
+    - name: Install cargo-tarpaulin
+      run: cargo install cargo-tarpaulin
+
+    - name: Generate code coverage
+      run: cargo tarpaulin --out Xml
+
+    - name: Upload to codecov.io
+      uses: codecov/codecov-action@v3
+      with:
+        file: cobertura.xml
+        fail_ci_if_error: true
+
   test:
+    needs: coverage
     name: Run tests
     runs-on: ubuntu-latest
     steps:
