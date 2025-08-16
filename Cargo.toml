@@ -19,3 +19,6 @@ serde = "1.0.210"
 toml = "0.8.19"
 chrono = "0.4.38"
 openssl = { version = "0.10.66", optional = true }
+
+[dev-dependencies]
+tempfile = "3.10"

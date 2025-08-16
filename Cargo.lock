@@ -190,6 +190,7 @@ dependencies = [
  "serde",
  "shiplift",
  "teloxide",
+ "tempfile",
  "tokio",
  "toml",
 ]
