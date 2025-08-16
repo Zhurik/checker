@@ -1,0 +1,17 @@
+# Example configuration file for Checker
+
+# Telegram bot token (required)
+token = "YOUR_TELEGRAM_BOT_TOKEN_HERE"
+
+# Telegram chat ID where messages will be sent (required)
+chat_id = 123456789
+
+# Docker image to pull for testing (required)
+image = "nginx:latest"
+
+# List of people to mention in error notifications (optional)
+people = [
+  "@Alice",
+  "@Bob",
+  "@Charlie"
+]

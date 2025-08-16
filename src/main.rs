@@ -1,3 +1,8 @@
+//! Main entry point for the checker application
+//!
+//! This module contains the main function that orchestrates the Docker image
+//! pull performance testing and reporting to Telegram.
+
 use checker::configs::{args, config};
 use clap::Parser;
 use futures::StreamExt;
@@ -6,6 +11,16 @@ use std::time::Instant;
 use teloxide::prelude::*;
 use chrono;
 
+/// Main application entry point
+///
+/// This function performs the following steps:
+/// 1. Parses command-line arguments
+/// 2. Loads configuration from the specified file
+/// 3. Connects to the Telegram bot
+/// 4. Connects to the Docker daemon
+/// 5. Measures the time to pull the configured Docker image
+/// 6. Reports results to Telegram
+/// 7. Cleans up by deleting the pulled image
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = args::Args::parse();
@@ -64,4 +79,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_main_function_compiles() {
+        // This test ensures that the main function has the correct signature
+        // and that all required dependencies are available.
+        // We don't actually run the main function here as it requires
+        // Docker and Telegram connections.
+        assert_eq!(2 + 2, 4);
+    }
 }

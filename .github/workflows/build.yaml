@@ -1,4 +1,4 @@
-name: Build
+name: Build and Test
 
 on:
   push:
@@ -17,16 +17,36 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  # pre-commit:
-  #   name: Run all linters
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - uses: actions/setup-python@v3
-  #   - uses: pre-commit/action@v3.0.1
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          ~/.rustup
+          target
+        key: ${{ runner.os }}-test-stable
+
+    - name: Install Rust
+      run: |
+        rustup install stable
+        rustup default stable
+        rustup show
+
+    - name: Run tests
+      run: cargo test --all-features
 
   build:
-    # needs: pre-commit
+    needs: test
     name: Build for ${{ matrix.build }}
     runs-on: ${{ matrix.os }}
     strategy:
