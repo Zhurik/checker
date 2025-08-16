@@ -17,7 +17,35 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  docs:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          ~/.rustup
+        key: ${{ runner.os }}-docs-stable
+
+    - name: Install Rust
+      run: |
+        rustup install stable
+        rustup default stable
+        rustup show
+
+    - name: Check documentation
+      run: cargo doc --no-deps --document-private-items
+
   test:
+    needs: docs
     name: Run tests
     runs-on: ubuntu-latest
     steps:
