@@ -17,7 +17,38 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          ~/.rustup
+        key: ${{ runner.os }}-security-stable
+
+    - name: Install Rust
+      run: |
+        rustup install stable
+        rustup default stable
+        rustup show
+
+    - name: Install cargo-audit
+      run: cargo install cargo-audit
+
+    - name: Run security audit
+      run: cargo audit
+
   test:
+    needs: security
     name: Run tests
     runs-on: ubuntu-latest
     steps:
